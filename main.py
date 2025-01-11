@@ -1,5 +1,6 @@
 import tkinter as tk
-import tkmacosx as tkm
+import time
+from data import *
 
 INDIGO = (0, 0, 20)
 BLUE = (0, 0, 60)
@@ -18,6 +19,7 @@ def center(win): #center a window
     y = win.winfo_screenheight() // 2 - win_height // 2
     win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
     win.deiconify()
+    win.update()
 
 def rgbToHex(values):
     s = "#"
@@ -27,39 +29,131 @@ def rgbToHex(values):
         s += HEX_DIGITS[digit1] + HEX_DIGITS[digit2]
     return s
 
-def transition(win):
-    global scr, buttons, canvas_array
-
-
-def transitionMain():
-    global scr, buttons, canvas_array
-    for widget in buttons:
-        widget.destroy()
-    for canvas in canvas_array:
-        canvas.destroy()
-    f = tk.Frame(scr, bg=rgbToHex(INDIGO))
-    f.pack()
-    for i in range(5):
-        b = tkm.Button(f, text="325 BC", font="arial 20 bold", bg=rgbToHex(BLUE), fg=rgbToHex(WHITE), height=100, width=100, borderless=True)
-        b.grid(row=0, column=i)
-        buttons.append(b)
-
-def updateWindow():
-    global scr, scr_location, buttons, canvas_array
-    if scr_location == "Main":
+def transitionOut(pause):
+    global scr, buttons, canvas_elements, labels
+    step = 20
+    new_button = list(BLUE)
+    new_label = list(WHITE)
+    for i in range(step):
+        for i in range(3):
+            new_label[i] -= (WHITE[i] - INDIGO[i]) // step
+        for label in labels:
+            label.config(fg=rgbToHex(new_label))
+        for i in range(3):
+            new_button[i] -= (BLUE[i] - INDIGO[i]) // step
         for button in buttons:
-            button.grid_forget()
-        transitionMain()
+            button.config(bg=rgbToHex(new_button), fg=rgbToHex(new_label))
+        scr.update()
+        time.sleep(pause)
+    if new_label != INDIGO:
+        for label in labels:
+            label.config(fg=rgbToHex(INDIGO))
+        for button in buttons:
+            button.config(fg=rgbToHex(INDIGO))
+    if new_button != INDIGO:
+        for button in buttons:
+            button.config(bg=rgbToHex(INDIGO))
+
+def transitionIn(pause):
+    global scr, buttons, canvas_elements, labels
+    step = 20
+    new_button = list(INDIGO)
+    new_label = list(INDIGO)
+    for i in range(step):
+        for i in range(3):
+            new_label[i] += (WHITE[i] - INDIGO[i]) // step
+        for label in labels:
+            label.config(fg=rgbToHex(new_label))
+        for i in range(3):
+            new_button[i] += (BLUE[i] - INDIGO[i]) // step
+        for button in buttons:
+            button.config(bg=rgbToHex(new_button), fg=rgbToHex(new_label))
+        scr.update()
+        time.sleep(pause)
+    if new_label != WHITE:
+        for label in labels:
+            label.config(fg=rgbToHex(WHITE))
+        for button in buttons:
+            button.config(fg=rgbToHex(WHITE))
+    if new_button != BLUE:
+        for button in buttons:
+            button.config(bg=rgbToHex(BLUE))
+    scr.update()
+
+def message(message):
+    global scr
+    l = tk.Label(scr, text=message, font="optima 15 bold", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO))
+    labels.append(l)
+    l.pack()
+    scr.update()
+    l.place(x=400-l.winfo_width()/2, y=300-l.winfo_height()/2)
+    transitionIn(0.1)
+    time.sleep(3)
+    transitionOut(0.1)
+    labels.remove(l)
+    l.destroy()
+
+def displayIntro():
+    global scr, buttons, labels
+    message("Life is full of changes")
+    message("some big, some small")
+    message("but changes nonetheless")
+    message("and there are some things that change with us")
+    message("whether in a day, or in a millennia.")
+    time.sleep(1)
+    message("This is the story of one of them.")
+    time.sleep(1)
+    title1 = tk.Label(scr, text="Mathematical", font="georgia 50 bold", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO))
+    title1.pack()
+    labels.append(title1)
+    title2 = tk.Label(scr, text="Identity", font="{snell roundhand} 50 bold", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO))
+    title2.pack()
+    labels.append(title2)
+    enter = tk.Button(scr, text="Begin", font="{snell roundhand} 15", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO), highlightbackground=rgbToHex(INDIGO))
+    enter.pack()
+    buttons.append(enter)
+    scr.update()
+    title1.place(x=400-title1.winfo_width()/2, y=150)
+    title2.place(x=400-title2.winfo_width()/2, y=200)
+    enter.place(x=400-enter.winfo_width()/2, y=300)
+    enter.config(command=enterMain)
+    transitionIn(0.1)
+
+def enterMain():
+    global scr, buttons, labels, canvas_elements
+    transitionOut(0.1)
+    for b in buttons:
+        b.destroy()
+        buttons.remove(b)
+    for l in labels:
+        l.destroy()
+        labels.remove(l)
+    setupMain()
+    transitionIn(0.1)
+
+def setupMain():
+    global scr, buttons, canvas_elements
+    f = tk.Frame(scr, bg=rgbToHex(WHITE), height=600, width=800)
+    f.pack()
+    c = tk.Canvas(f, height=600, width=800, bg=rgbToHex(INDIGO), highlightbackground=rgbToHex(INDIGO))
+    c.place(x=0, y=0)
+    for i in range(5):
+        b = tk.Button(f, text=years[i], font="optima 15 bold", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO), highlightbackground=rgbToHex(INDIGO), height=2, width=5)
+        print(b.winfo_height())
+        b.place(x=100, y=100)
+        buttons.append(b)
+    scr.update()
 
 
 buttons = []
-canvas_array = []
-scr_location = "Main"
+canvas_elements = []
+labels = []
 scr = tk.Tk()
 scr.geometry('800x600')
 scr.title("Mathematical Identity")
 scr.config(bg=rgbToHex(INDIGO))
 center(scr)
-updateWindow()
+displayIntro()
+# setupMain()
 while True:
     scr.update()
