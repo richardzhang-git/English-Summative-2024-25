@@ -1,6 +1,7 @@
 import tkinter as tk
 import time
 from data import *
+from scrollFrame import ScrollableFrame
 
 INDIGO = (0, 0, 20)
 BLUE = (0, 0, 60)
@@ -159,7 +160,11 @@ def displayParagraph(stage):
         l.config(fg=rgbToHex(new_white), bg=rgbToHex(new_indigo))
     display = tk.Frame(scr, bg="white", height=500, width=300)
     display.place(x=250, y=50)
-    exit_button = tk.Button(display, text="✕", bg="white", fg="black", highlightbackground="white", width=1, height=1)
+    content = ScrollableFrame(display, height=500, width=300)
+    paragraph = tk.Label(content.scrollable_frame, text=paragraphs[stage], font="optima 15", bg="white", fg="black", wraplength=295)
+    paragraph.pack()
+    content.place(x=0, y=0)
+    exit_button = tk.Button(display, text="✕", bg="white", fg="black", highlightbackground="white", width=1, height=1, command=exit_paragraph)
     exit_button.place(x=255, y=0)
     scr.update()
 
@@ -175,6 +180,7 @@ scr.geometry('800x600')
 scr.title("Mathematical Identity")
 scr.config(bg=rgbToHex(INDIGO))
 center(scr)
-displayIntro()
+# displayIntro()
+displayParagraph(0)
 while True:
     scr.update()
