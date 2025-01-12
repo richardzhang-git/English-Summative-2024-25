@@ -80,6 +80,7 @@ def transitionIn(pause):
             button.config(bg=rgbToHex(BLUE))
     scr.update()
 
+
 def message(message):
     global scr
     l = tk.Label(scr, text=message, font="optima 15 bold", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO))
@@ -100,9 +101,9 @@ def displayIntro():
     message("but changes nonetheless")
     message("and there are some things that change with us")
     message("whether in a day, or in a millennia.")
-    time.sleep(1)
+    time.sleep(1.5)
     message("This is the story of one of them.")
-    time.sleep(1)
+    time.sleep(2)
     title1 = tk.Label(scr, text="Mathematical", font="georgia 50 bold", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO))
     title1.pack()
     labels.append(title1)
@@ -116,10 +117,10 @@ def displayIntro():
     title1.place(x=400-title1.winfo_width()/2, y=150)
     title2.place(x=400-title2.winfo_width()/2, y=200)
     enter.place(x=400-enter.winfo_width()/2, y=300)
-    enter.config(command=enterMain)
+    enter.config(command=displayMain)
     transitionIn(0.1)
 
-def enterMain():
+def displayMain():
     global scr, buttons, labels, canvas_elements
     transitionOut(0.1)
     for b in buttons:
@@ -128,24 +129,45 @@ def enterMain():
     for l in labels:
         l.destroy()
         labels.remove(l)
-    setupMain()
-    transitionIn(0.1)
-
-def setupMain():
-    global scr, buttons, canvas_elements
     f = tk.Frame(scr, bg=rgbToHex(WHITE), height=600, width=800)
     f.pack()
     c = tk.Canvas(f, height=600, width=800, bg=rgbToHex(INDIGO), highlightbackground=rgbToHex(INDIGO))
     c.place(x=0, y=0)
     for i in range(5):
-        b = tk.Button(f, text=years[i], font="optima 15 bold", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO), highlightbackground=rgbToHex(INDIGO), height=2, width=5)
-        print(b.winfo_height())
-        b.place(x=100, y=100)
+        b = tk.Button(f, text=years[i], font="optima 15 bold", bg=rgbToHex(INDIGO), fg=rgbToHex(INDIGO),
+                      highlightbackground=rgbToHex(INDIGO), height=2, width=5)
+        b.place(x=156 * i + 47.5, y=276)
+        scr.update()
         buttons.append(b)
+    transitionIn(0.1)
+    for i in range(5):
+        buttons[i].config(command=lambda x=i: displayParagraph(x))
+
+def displayParagraph(stage):
+    global scr, buttons, labels, canvas_elements
+    new_indigo = []
+    new_white = []
+    new_blue = []
+    for i in range(3):
+        new_indigo.append(INDIGO[i] // 2)
+        new_white.append(WHITE[i] // 2)
+        new_blue.append(BLUE[i] // 2)
+    scr.config(bg=rgbToHex(new_indigo))
+    for b in buttons:
+        b.config(fg=rgbToHex(new_white), bg=rgbToHex(new_blue), highlightbackground=rgbToHex(new_indigo))
+    for l in labels:
+        l.config(fg=rgbToHex(new_white), bg=rgbToHex(new_indigo))
+    display = tk.Frame(scr, bg="white", height=500, width=300)
+    display.place(x=250, y=50)
+    exit_button = tk.Button(display, text="✕", bg="white", fg="black", highlightbackground="white", width=1, height=1)
+    exit_button.place(x=255, y=0)
     scr.update()
 
+def exit_paragraph():
+    pass
 
 buttons = []
+canvas_array = []
 canvas_elements = []
 labels = []
 scr = tk.Tk()
@@ -154,6 +176,5 @@ scr.title("Mathematical Identity")
 scr.config(bg=rgbToHex(INDIGO))
 center(scr)
 displayIntro()
-# setupMain()
 while True:
     scr.update()
