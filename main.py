@@ -1,7 +1,7 @@
 import tkinter as tk
 import time
 from data import *
-from scrollFrame import ScrollableFrame
+from scrollFrame import ScrollableFrame, paragraph_elements
 
 INDIGO = (0, 0, 20)
 BLUE = (0, 0, 60)
@@ -145,7 +145,7 @@ def displayMain():
         buttons[i].config(command=lambda x=i: displayParagraph(x))
 
 def displayParagraph(stage):
-    global scr, buttons, labels, canvas_elements
+    global scr, buttons, labels, canvas_elements, paragraph_elements
     new_indigo = []
     new_white = []
     new_blue = []
@@ -160,17 +160,26 @@ def displayParagraph(stage):
         l.config(fg=rgbToHex(new_white), bg=rgbToHex(new_indigo))
     display = tk.Frame(scr, bg="white", height=500, width=300)
     display.place(x=250, y=50)
+    display.pack_propagate(False)
+    paragraph_elements.append(display)
     content = ScrollableFrame(display, height=500, width=300)
-    paragraph = tk.Label(content.scrollable_frame, text=paragraphs[stage], font="optima 15", bg="white", fg="black", wraplength=295)
+    paragraph = tk.Label(content.scrollable_frame, text=paragraphs[stage], font="optima 15", bg="white", fg="black", wraplength=280)
     paragraph.pack()
-    content.place(x=0, y=0)
+    paragraph_elements.append(paragraph)
     exit_button = tk.Button(display, text="✕", bg="white", fg="black", highlightbackground="white", width=1, height=1, command=exit_paragraph)
     exit_button.place(x=255, y=0)
+    paragraph_elements.append(exit_button)
     scr.update()
 
 def exit_paragraph():
-    pass
-
+    global scr, buttons, labels, canvas_elements, paragraph_elements
+    scr.config(bg=rgbToHex(INDIGO))
+    for b in buttons:
+        b.config(fg=rgbToHex(WHITE), bg=rgbToHex(BLUE), highlightbackground=rgbToHex(INDIGO))
+    for l in labels:
+        l.config(fg=rgbToHex(WHITE), bg=rgbToHex(INDIGO))
+    for widget in paragraph_elements:
+        widget.destroy()
 buttons = []
 canvas_array = []
 canvas_elements = []
@@ -180,7 +189,6 @@ scr.geometry('800x600')
 scr.title("Mathematical Identity")
 scr.config(bg=rgbToHex(INDIGO))
 center(scr)
-# displayIntro()
-displayParagraph(0)
+displayIntro()
 while True:
     scr.update()
