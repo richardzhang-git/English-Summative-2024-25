@@ -1,12 +1,11 @@
 import tkinter as tk
-from tkinter import ttk
 
 paragraph_elements = []
 class ScrollableFrame():
     def __init__(self, container, height, width, *args, **kwargs):
         self.canvas = tk.Canvas(container, highlightbackground="white")
         scrollbar = tk.Scrollbar(container, orient="vertical", command=self.canvas.yview)
-        self.scrollable_frame = ttk.Frame(self.canvas)
+        self.scrollable_frame = tk.Frame(self.canvas, height=height, width=width, bg="white")
 
         self.scrollable_frame.bind(
             "<Configure>",

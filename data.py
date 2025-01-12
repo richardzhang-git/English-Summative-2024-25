@@ -1,5 +1,5 @@
 years = ["325 BCE", "1254", "3876", "8375", "1736"]
-image_paths = []
+image_paths = ['Test.png']
 paragraphs = [
     '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean quis sodales mi. Curabitur in cursus risus. Quisque nec quam nulla. Quisque vehicula leo nec sollicitudin pharetra. Nulla finibus ligula hendrerit dui iaculis volutpat. Fusce tempus tincidunt fringilla. Integer volutpat elit ut orci laoreet rutrum. Mauris ipsum nisl, consectetur quis nisi sit amet, euismod convallis erat. Aenean id est a velit aliquet eleifend. Etiam at semper neque. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur non hendrerit nulla.
 

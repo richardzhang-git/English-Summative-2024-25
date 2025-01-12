@@ -1,5 +1,8 @@
 import tkinter as tk
 import time
+from pydoc import importfile
+from tkinter.constants import DISABLED, NORMAL
+from PIL import ImageTk, Image
 from data import *
 from scrollFrame import ScrollableFrame, paragraph_elements
 
@@ -145,7 +148,7 @@ def displayMain():
         buttons[i].config(command=lambda x=i: displayParagraph(x))
 
 def displayParagraph(stage):
-    global scr, buttons, labels, canvas_elements, paragraph_elements
+    global scr, buttons, labels, canvas_elements, paragraph_elements, images
     new_indigo = []
     new_white = []
     new_blue = []
@@ -155,7 +158,7 @@ def displayParagraph(stage):
         new_blue.append(BLUE[i] // 2)
     scr.config(bg=rgbToHex(new_indigo))
     for b in buttons:
-        b.config(fg=rgbToHex(new_white), bg=rgbToHex(new_blue), highlightbackground=rgbToHex(new_indigo))
+        b.config(fg=rgbToHex(new_white), bg=rgbToHex(new_blue), highlightbackground=rgbToHex(new_indigo), state=DISABLED)
     for l in labels:
         l.config(fg=rgbToHex(new_white), bg=rgbToHex(new_indigo))
     display = tk.Frame(scr, bg="white", height=500, width=300)
@@ -163,23 +166,28 @@ def displayParagraph(stage):
     display.pack_propagate(False)
     paragraph_elements.append(display)
     content = ScrollableFrame(display, height=500, width=300)
+    img = tk.Label(content.scrollable_frame, image=images[stage], bd=0)
+    img.place(x=0, y=0)
+    scr.update()
+    #incorporate title into image (custom)
     paragraph = tk.Label(content.scrollable_frame, text=paragraphs[stage], font="baskerville 15", bg="white", fg="black", wraplength=280)
-    paragraph.pack()
-    paragraph_elements.append(paragraph)
+    paragraph.place(x=0, y=img.winfo_height())
+    scr.update()
+    content.scrollable_frame.config(height=img.winfo_height()+paragraph.winfo_height(), width=300)
     exit_button = tk.Button(display, text="✕", bg="white", fg="black", highlightbackground="white", width=1, height=1, command=exit_paragraph)
     exit_button.place(x=255, y=0)
-    paragraph_elements.append(exit_button)
     scr.update()
 
 def exit_paragraph():
     global scr, buttons, labels, canvas_elements, paragraph_elements
-    scr.config(bg=rgbToHex(INDIGO))
-    for b in buttons:
-        b.config(fg=rgbToHex(WHITE), bg=rgbToHex(BLUE), highlightbackground=rgbToHex(INDIGO))
-    for l in labels:
-        l.config(fg=rgbToHex(WHITE), bg=rgbToHex(INDIGO))
     for widget in paragraph_elements:
         widget.destroy()
+    scr.config(bg=rgbToHex(INDIGO))
+    for b in buttons:
+        b.config(fg=rgbToHex(WHITE), bg=rgbToHex(BLUE), highlightbackground=rgbToHex(INDIGO), state=NORMAL)
+    for l in labels:
+        l.config(fg=rgbToHex(WHITE), bg=rgbToHex(INDIGO))
+
 buttons = []
 canvas_array = []
 canvas_elements = []
@@ -189,6 +197,19 @@ scr.geometry('800x600')
 scr.title("Mathematical Identity")
 scr.config(bg=rgbToHex(INDIGO))
 center(scr)
+
+def tokenSizing(w, h):
+    scale = max(w, h) / 300
+    return round(w / scale), round(h / scale)
+
+images = []
+
+for path in image_paths:
+    img = Image.open(rf'{path}')
+    img = img.resize(tokenSizing(img.width, img.height))
+    img = ImageTk.PhotoImage(img)
+    images.append(img)
+
 # displayIntro()
 displayParagraph(0)
 while True:
