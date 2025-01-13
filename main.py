@@ -1,7 +1,7 @@
 import tkinter as tk
 import time
 from pydoc import importfile
-from tkinter.constants import DISABLED, NORMAL
+from tkinter.constants import DISABLED, NORMAL, LEFT
 from PIL import ImageTk, Image
 from data import *
 from scrollFrame import ScrollableFrame, paragraph_elements
@@ -170,7 +170,7 @@ def displayParagraph(stage):
     img.place(x=0, y=0)
     scr.update()
     #incorporate title into image (custom)
-    paragraph = tk.Label(content.scrollable_frame, text=paragraphs[stage], font="baskerville 15", bg="white", fg="black", wraplength=280)
+    paragraph = tk.Label(content.scrollable_frame, text=paragraphs[stage], font="optima 15", bg="white", fg="black", anchor="e", justify=LEFT, wraplength=280)
     paragraph.place(x=0, y=img.winfo_height())
     scr.update()
     content.scrollable_frame.config(height=img.winfo_height()+paragraph.winfo_height(), width=300)
@@ -210,7 +210,6 @@ for path in image_paths:
     img = ImageTk.PhotoImage(img)
     images.append(img)
 
-# displayIntro()
-displayParagraph(0)
+displayIntro()
 while True:
     scr.update()
